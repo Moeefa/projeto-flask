@@ -11,9 +11,9 @@ COPY ../app .
 
 EXPOSE 9000
 
-#CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=9000"]
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=9000"]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "--workers", "3", "--reload", "app:app"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:9000", "--workers", "3", "--reload", "app:app"]
 
 
 
