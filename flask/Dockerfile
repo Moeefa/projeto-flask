@@ -3,18 +3,17 @@ FROM python:3.10-slim
 # Define o diretório de trabalho
 WORKDIR /var/www/flask_docker
 
-COPY ../app/requirements.txt /var/www/flask_docker/requirements.txt
+# Copiar requirements.txt
+COPY app/requirements.txt .
 
+# Instalar dependências
 RUN pip install -r requirements.txt
 
-COPY ../app .
+# Copiar a aplicação - a pasta app e o arquivo run.py
+COPY app/ ./app/
+COPY run.py .
 
 EXPOSE 9000
 
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=9000"]
-
-#CMD ["gunicorn", "--bind", "0.0.0.0:9000", "--workers", "3", "--reload", "app:app"]
-
-
-
-
+# Usar o arquivo run.py para iniciar a aplicação
+CMD ["python", "run.py"]

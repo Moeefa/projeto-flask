@@ -21,7 +21,8 @@ services:
     ports:
       - '9000:9000'
     volumes:
-      - ./app:/var/www/flask_docker
+      - ./app:/var/www/flask_docker/app
+      - ./run.py:/var/www/flask_docker/run.py
     depends_on:
       - database
   nginx:
