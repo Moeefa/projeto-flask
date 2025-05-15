@@ -13,9 +13,7 @@ RUN pip install -r requirements.txt
 COPY app/ ./app/
 COPY run.py .
 
-ENV PYTHONDONTWRITEBYTECODE=1
-
 EXPOSE 9000
 
 # Usar o arquivo run.py para iniciar a aplicação
-CMD ["python", "-B", "run.py"]
+CMD ["python", "run.py"]
