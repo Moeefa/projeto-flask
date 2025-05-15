@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Items in Category: {{ category.name }}</h1>
+<a href="{{ url_for('category_index') }}" class="btn btn-secondary mb-3">Back to Categories</a>
+
+{% if category.items %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in category.items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                    <a href="{{ url_for('update', id=item.id) }}" class="btn btn-warning">Edit</a>
+                    <a href="{{ url_for('delete', id=item.id) }}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">No items in this category.</div>
+{% endif %}
+{% endblock %}

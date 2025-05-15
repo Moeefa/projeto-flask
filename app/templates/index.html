@@ -8,6 +8,7 @@
         <tr>
             <th>Name</th>
             <th>Description</th>
+            <th>Category</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -16,6 +17,13 @@
         <tr>
             <td>{{ item.name }}</td>
             <td>{{ item.description }}</td>
+            <td>
+                {% if item.category %}
+                    {{ item.category.name }}
+                {% else %}
+                    <em>No category</em>
+                {% endif %}
+            </td>
             <td>
                 <a href="{{ url_for('update', id=item.id) }}" class="btn btn-warning">Edit</a>
                 <a href="{{ url_for('delete', id=item.id) }}" class="btn btn-danger">Delete</a>
