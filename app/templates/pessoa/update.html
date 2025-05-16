@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Atualizar Pessoa</h1>
+<form method="POST">
+    <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" class="form-control" id="nome" name="nome" value="{{ pessoa.nome }}" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ pessoa.email }}">
+    </div>
+    <div class="form-group">
+        <label for="telefone">Telefone</label>
+        <input type="text" class="form-control" id="telefone" name="telefone" value="{{ pessoa.telefone }}">
+    </div>
+    <div class="form-group">
+        <label for="endereco">Endereço</label>
+        <textarea class="form-control" id="endereco" name="endereco" rows="3">{{ pessoa.endereco }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Atualizar</button>
+</form>
+{% endblock %}

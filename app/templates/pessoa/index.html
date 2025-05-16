@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Pessoas</h1>
+<a href="{{ url_for('pessoa_create') }}" class="btn btn-primary">Criar Nova Pessoa</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Endereço</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+       {% for pessoa in pessoas %}
+        <tr>
+            <td>{{ pessoa.nome }}</td>
+            <td>{{ pessoa.email }}</td>
+            <td>{{ pessoa.telefone }}</td>
+            <td>{{ pessoa.endereco }}</td>
+            <td>
+                <a href="{{ url_for('pessoa_update', id=pessoa.id) }}"
+                class="btn btn-warning">Editar</a>
+                <a href="{{ url_for('pessoa_delete', id=pessoa.id) }}"
+                class="btn btn-danger">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
