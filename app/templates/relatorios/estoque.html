@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório de Estoque - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-file-earmark-bar-graph"></i> Relatório de Estoque</h1>
+            <div>
+                <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+                <a href="{{ url_for('relatorios_index') }}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resumo Executivo -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>{{ estoques | length }}</h3>
+                <p class="mb-0">Itens no Estoque</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h3>{{ estoques | selectattr('quantidade_atual', 'le', 'quantidade_minima') | list | length }}</h3>
+                <p class="mb-0">Estoque Baixo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>{{ estoques | sum(attribute='quantidade_atual') }}</h3>
+                <p class="mb-0">Qtd Total</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h3>R$ {{ "%.2f"|format(estoques | sum(attribute='produto.valor') if estoques else 0) }}</h3>
+                <p class="mb-0">Valor Total</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela Detalhada -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Detalhamento por Produto e Ambiente</h5>
+            </div>
+            <div class="card-body">
+                {% if estoques %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Código</th>
+                                    <th>Categoria</th>
+                                    <th>Ambiente</th>
+                                    <th>Filial</th>
+                                    <th>UF</th>
+                                    <th>Qtd Atual</th>
+                                    <th>Qtd Mín</th>
+                                    <th>Qtd Máx</th>
+                                    <th>Status</th>
+                                    <th>Valor Unit.</th>
+                                    <th>Valor Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estoque in estoques %}
+                                <tr class="{{ 'table-warning' if estoque.quantidade_atual <= estoque.quantidade_minima else '' }}">
+                                    <td><strong>{{ estoque.produto.nome }}</strong></td>
+                                    <td>{{ estoque.produto.cod_prod }}</td>
+                                    <td>{{ estoque.produto.categoria or '-' }}</td>
+                                    <td>{{ estoque.ambiente.nome }}</td>
+                                    <td>{{ estoque.ambiente.filial.nome }}</td>
+                                    <td>{{ estoque.ambiente.filial.uf }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if estoque.quantidade_atual <= estoque.quantidade_minima else 'success' }}">
+                                            {{ estoque.quantidade_atual }}
+                                        </span>
+                                    </td>
+                                    <td>{{ estoque.quantidade_minima }}</td>
+                                    <td>{{ estoque.quantidade_maxima or '-' }}</td>
+                                    <td>
+                                        {% if estoque.quantidade_atual <= estoque.quantidade_minima %}
+                                            <span class="badge bg-danger">Baixo</span>
+                                        {% elif estoque.quantidade_maxima and estoque.quantidade_atual >= estoque.quantidade_maxima %}
+                                            <span class="badge bg-warning text-dark">Alto</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Normal</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if estoque.produto.valor %}
+                                            R$ {{ "%.2f"|format(estoque.produto.valor) }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if estoque.produto.valor %}
+                                            R$ {{ "%.2f"|format(estoque.produto.valor * estoque.quantidade_atual) }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhum item no estoque</h4>
+                        <p class="text-muted">Registre movimentações para popular o relatório de estoque.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas de Estoque Baixo -->
+{% if estoques | selectattr('quantidade_atual', 'le', 'quantidade_minima') | list %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Alertas de Estoque Baixo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for estoque in estoques %}
+                        {% if estoque.quantidade_atual <= estoque.quantidade_minima %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="alert alert-danger mb-2">
+                                <strong>{{ estoque.produto.nome }}</strong><br>
+                                <small>{{ estoque.ambiente.nome }} - {{ estoque.ambiente.filial.nome }}</small><br>
+                                <span class="badge bg-danger">{{ estoque.quantidade_atual }}/{{ estoque.quantidade_minima }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Rodapé do Relatório -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="text-center text-muted">
+            <hr>
+            <p>Relatório gerado em {{ now.strftime('%d de %B de %Y') }} | Sistema de Rastreabilidade de Patrimônio</p>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .card-header { print-color-adjust: exact; }
+    .no-print { display: none !important; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Filial - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-pencil"></i> Editar Filial</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome da Filial *</label>
+                                <input type="text" class="form-control" id="nome" name="nome" 
+                                       value="{{ filial.nome }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="cod_filial" class="form-label">Código da Filial</label>
+                                <input type="number" class="form-control" id="cod_filial" name="cod_filial" 
+                                       value="{{ filial.cod_filial }}" disabled>
+                                <small class="text-muted">O código não pode ser alterado</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="uf" class="form-label">UF *</label>
+                                <select class="form-control" id="uf" name="uf" required>
+                                    <option value="">Selecione</option>
+                                    <option value="AC" {{ 'selected' if filial.uf == 'AC' else '' }}>AC</option>
+                                    <option value="AL" {{ 'selected' if filial.uf == 'AL' else '' }}>AL</option>
+                                    <option value="AP" {{ 'selected' if filial.uf == 'AP' else '' }}>AP</option>
+                                    <option value="AM" {{ 'selected' if filial.uf == 'AM' else '' }}>AM</option>
+                                    <option value="BA" {{ 'selected' if filial.uf == 'BA' else '' }}>BA</option>
+                                    <option value="CE" {{ 'selected' if filial.uf == 'CE' else '' }}>CE</option>
+                                    <option value="DF" {{ 'selected' if filial.uf == 'DF' else '' }}>DF</option>
+                                    <option value="ES" {{ 'selected' if filial.uf == 'ES' else '' }}>ES</option>
+                                    <option value="GO" {{ 'selected' if filial.uf == 'GO' else '' }}>GO</option>
+                                    <option value="MA" {{ 'selected' if filial.uf == 'MA' else '' }}>MA</option>
+                                    <option value="MT" {{ 'selected' if filial.uf == 'MT' else '' }}>MT</option>
+                                    <option value="MS" {{ 'selected' if filial.uf == 'MS' else '' }}>MS</option>
+                                    <option value="MG" {{ 'selected' if filial.uf == 'MG' else '' }}>MG</option>
+                                    <option value="PA" {{ 'selected' if filial.uf == 'PA' else '' }}>PA</option>
+                                    <option value="PB" {{ 'selected' if filial.uf == 'PB' else '' }}>PB</option>
+                                    <option value="PR" {{ 'selected' if filial.uf == 'PR' else '' }}>PR</option>
+                                    <option value="PE" {{ 'selected' if filial.uf == 'PE' else '' }}>PE</option>
+                                    <option value="PI" {{ 'selected' if filial.uf == 'PI' else '' }}>PI</option>
+                                    <option value="RJ" {{ 'selected' if filial.uf == 'RJ' else '' }}>RJ</option>
+                                    <option value="RN" {{ 'selected' if filial.uf == 'RN' else '' }}>RN</option>
+                                    <option value="RS" {{ 'selected' if filial.uf == 'RS' else '' }}>RS</option>
+                                    <option value="RO" {{ 'selected' if filial.uf == 'RO' else '' }}>RO</option>
+                                    <option value="RR" {{ 'selected' if filial.uf == 'RR' else '' }}>RR</option>
+                                    <option value="SC" {{ 'selected' if filial.uf == 'SC' else '' }}>SC</option>
+                                    <option value="SP" {{ 'selected' if filial.uf == 'SP' else '' }}>SP</option>
+                                    <option value="SE" {{ 'selected' if filial.uf == 'SE' else '' }}>SE</option>
+                                    <option value="TO" {{ 'selected' if filial.uf == 'TO' else '' }}>TO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" 
+                                       value="{{ filial.cidade or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Telefone *</label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                       value="{{ filial.phone }}" placeholder="(11) 3333-3333" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="endereco" class="form-label">Endereço</label>
+                        <textarea class="form-control" id="endereco" name="endereco" rows="3" 
+                                  placeholder="Endereço completo da filial...">{{ filial.endereco or '' }}</textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('filiais_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Atualizar Filial
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

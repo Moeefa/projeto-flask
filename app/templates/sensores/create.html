@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Sensor - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-cpu"></i> Cadastrar Novo Sensor</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cod_sensor" class="form-label">Código do Sensor *</label>
+                                <input type="number" class="form-control" id="cod_sensor" name="cod_sensor" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipo" class="form-label">Tipo de Sensor *</label>
+                                <select class="form-control" id="tipo" name="tipo" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="rfid">RFID</option>
+                                    <option value="barcode">Código de Barras</option>
+                                    <option value="qrcode">QR Code</option>
+                                    <option value="nfc">NFC</option>
+                                    <option value="bluetooth">Bluetooth</option>
+                                    <option value="gps">GPS</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_func" class="form-label">Funcionário Responsável *</label>
+                                <select class="form-control" id="id_func" name="id_func" required>
+                                    <option value="">Selecione um funcionário</option>
+                                    {% for funcionario in funcionarios %}
+                                        <option value="{{ funcionario.id }}">{{ funcionario.name }} ({{ funcionario.cod_func }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_prod" class="form-label">Produto Associado *</label>
+                                <select class="form-control" id="id_prod" name="id_prod" required>
+                                    <option value="">Selecione um produto</option>
+                                    {% for produto in produtos %}
+                                        <option value="{{ produto.id }}">{{ produto.nome }} ({{ produto.cod_prod }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Informação:</strong> O sensor será criado com status "ativo" por padrão. 
+                        Você pode alterar o status posteriormente na edição.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('sensores_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Salvar Sensor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Estoque - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-boxes"></i> Controle de Estoque</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if estoques %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Ambiente</th>
+                                    <th>Filial</th>
+                                    <th>Qtd. Atual</th>
+                                    <th>Qtd. Mínima</th>
+                                    <th>Qtd. Máxima</th>
+                                    <th>Status</th>
+                                    <th>Última Atualização</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estoque in estoques %}
+                                <tr class="{{ 'table-warning' if estoque.quantidade_atual <= estoque.quantidade_minima else '' }}">
+                                    <td><strong>{{ estoque.produto.nome }}</strong></td>
+                                    <td>{{ estoque.ambiente.nome }}</td>
+                                    <td>{{ estoque.ambiente.filial.nome }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if estoque.quantidade_atual <= estoque.quantidade_minima else 'success' }}">
+                                            {{ estoque.quantidade_atual }}
+                                        </span>
+                                    </td>
+                                    <td>{{ estoque.quantidade_minima }}</td>
+                                    <td>{{ estoque.quantidade_maxima or '-' }}</td>
+                                    <td>
+                                        {% if estoque.quantidade_atual <= estoque.quantidade_minima %}
+                                            <span class="badge bg-danger">Estoque Baixo</span>
+                                        {% elif estoque.quantidade_maxima and estoque.quantidade_atual >= estoque.quantidade_maxima %}
+                                            <span class="badge bg-warning text-dark">Estoque Alto</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Normal</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ estoque.ultima_atualizacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('estoque_config', id_produto=estoque.id_produto, id_ambiente=estoque.id_ambiente) }}" 
+                                           class="btn btn-sm btn-info">
+                                            <i class="bi bi-gear"></i> Configurar
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-boxes display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhum estoque registrado</h4>
+                        <p class="text-muted">O estoque será criado automaticamente quando houver movimentações.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas Rápidas -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Estoque Baixo</h5>
+                <h2 class="text-danger">
+                    {% set estoque_baixo = [] %}
+                    {% for estoque in estoques %}
+                        {% if estoque.quantidade_atual <= estoque.quantidade_minima %}
+                            {% set _ = estoque_baixo.append(estoque) %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ estoque_baixo | length }}
+                </h2>
+                <p class="card-text">Produtos com estoque abaixo do mínimo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">Estoque Normal</h5>
+                <h2 class="text-success">
+                    {% set estoque_normal = [] %}
+                    {% for estoque in estoques %}
+                        {% if estoque.quantidade_atual > estoque.quantidade_minima %}
+                            {% set _ = estoque_normal.append(estoque) %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ estoque_normal | length }}
+                </h2>
+                <p class="card-text">Produtos com estoque adequado</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h5 class="card-title text-info">Total de Itens</h5>
+                <h2 class="text-info">{{ estoques | length }}</h2>
+                <p class="card-text">Produtos controlados no estoque</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

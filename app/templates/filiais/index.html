@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Filiais - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-building"></i> Filiais</h1>
+            <a href="{{ url_for('filiais_create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nova Filial
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if filiais %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>UF</th>
+                                    <th>Cidade</th>
+                                    <th>Telefone</th>
+                                    <th>Endereço</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for filial in filiais %}
+                                <tr>
+                                    <td><span class="badge bg-info">{{ filial.cod_filial }}</span></td>
+                                    <td><strong>{{ filial.nome }}</strong></td>
+                                    <td>{{ filial.uf }}</td>
+                                    <td>{{ filial.cidade or '-' }}</td>
+                                    <td>{{ filial.phone }}</td>
+                                    <td>{{ filial.endereco[:30] + '...' if filial.endereco and filial.endereco|length > 30 else filial.endereco or '-' }}</td>
+                                    <td>{{ filial.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('filiais_update', id=filial.id) }}" 
+                                               class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{{ url_for('filiais_delete', id=filial.id) }}" 
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Tem certeza que deseja remover esta filial?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-building display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhuma filial cadastrada</h4>
+                        <p class="text-muted">Clique no botão acima para cadastrar a primeira filial.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

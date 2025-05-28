@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard do Sistema</h1>
+    </div>
+</div>
+
+<!-- Cartões de Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Produtos</h6>
+                        <h2 class="mb-0">{{ total_produtos }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-box fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Funcionários</h6>
+                        <h2 class="mb-0">{{ total_funcionarios }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Filiais</h6>
+                        <h2 class="mb-0">{{ total_filiais }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-building fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Ambientes</h6>
+                        <h2 class="mb-0">{{ total_ambientes }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-geo-alt fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Últimas Movimentações -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-arrow-repeat"></i> Últimas Movimentações</h5>
+                <a href="{{ url_for('movimentacoes_index') }}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+            </div>
+            <div class="card-body">
+                {% if ultimas_movimentacoes %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Funcionário</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mov in ultimas_movimentacoes %}
+                                <tr>
+                                    <td>{{ mov.data_movimentacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if mov.tipo == 'entrada' else 'danger' if mov.tipo == 'saida' else 'info' }}">
+                                            {{ mov.tipo.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ mov.produto.nome }}</td>
+                                    <td>{{ mov.quantidade }}</td>
+                                    <td>{{ mov.funcionario.name }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhuma movimentação registrada ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Estoque Baixo -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle text-warning"></i> Estoque Baixo</h5>
+                <a href="{{ url_for('estoque_index') }}" class="btn btn-sm btn-outline-warning">Ver estoque</a>
+            </div>
+            <div class="card-body">
+                {% if produtos_estoque_baixo %}
+                    {% for estoque in produtos_estoque_baixo %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>{{ estoque.produto.nome }}</strong><br>
+                        <small>{{ estoque.ambiente.nome }} - Qtd: {{ estoque.quantidade_atual }}/{{ estoque.quantidade_minima }}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Todos os produtos estão com estoque adequado.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Links Rápidos -->
+<div class="row mt-4">
+    <div class="col-12">
+        <h3>Ações Rápidas</h3>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('movimentacoes_create') }}" class="btn btn-primary w-100 mb-2">
+            <i class="bi bi-plus-circle"></i><br>Nova Movimentação
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('produtos_create') }}" class="btn btn-success w-100 mb-2">
+            <i class="bi bi-box"></i><br>Novo Produto
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('funcionarios_create') }}" class="btn btn-info w-100 mb-2">
+            <i class="bi bi-person-plus"></i><br>Novo Funcionário
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('ambientes_create') }}" class="btn btn-warning w-100 mb-2">
+            <i class="bi bi-geo-alt"></i><br>Novo Ambiente
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('relatorio_estoque') }}" class="btn btn-secondary w-100 mb-2">
+            <i class="bi bi-file-earmark-text"></i><br>Relatório Estoque
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ url_for('relatorio_movimentacoes') }}" class="btn btn-dark w-100 mb-2">
+            <i class="bi bi-clock-history"></i><br>Relatório Movimentações
+        </a>
+    </div>
+</div>
+{% endblock %}

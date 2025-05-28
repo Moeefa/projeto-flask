@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Funcionários - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-people"></i> Funcionários</h1>
+            <a href="{{ url_for('funcionarios_create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Novo Funcionário
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if funcionarios %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for funcionario in funcionarios %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ funcionario.cod_func }}</span></td>
+                                    <td>{{ funcionario.name }}</td>
+                                    <td>{{ funcionario.role }}</td>
+                                    <td>{{ funcionario.email or '-' }}</td>
+                                    <td>{{ funcionario.telefone or '-' }}</td>
+                                    <td>{{ funcionario.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('funcionarios_update', id=funcionario.id) }}" 
+                                               class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{{ url_for('funcionarios_delete', id=funcionario.id) }}" 
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Tem certeza que deseja remover este funcionário?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-people display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhum funcionário cadastrado</h4>
+                        <p class="text-muted">Clique no botão acima para cadastrar o primeiro funcionário.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

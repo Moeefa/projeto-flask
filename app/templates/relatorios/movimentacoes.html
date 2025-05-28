@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório de Movimentações - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-clock-history"></i> Relatório de Movimentações</h1>
+            <div>
+                <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+                <a href="{{ url_for('relatorios_index') }}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="data_inicio" class="form-label">Data Início</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                               value="{{ data_inicio or '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="data_fim" class="form-label">Data Fim</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" 
+                               value="{{ data_fim or '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Filtrar
+                            </button>
+                            <a href="{{ url_for('relatorio_movimentacoes') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Limpar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resumo das Movimentações -->
+{% if movimentacoes %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>{{ movimentacoes | selectattr('tipo', 'equalto', 'entrada') | list | length }}</h3>
+                <p class="mb-0">Entradas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h3>{{ movimentacoes | selectattr('tipo', 'equalto', 'saida') | list | length }}</h3>
+                <p class="mb-0">Saídas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h3>{{ movimentacoes | selectattr('tipo', 'equalto', 'transferencia') | list | length }}</h3>
+                <p class="mb-0">Transferências</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>{{ movimentacoes | length }}</h3>
+                <p class="mb-0">Total</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Tabela de Movimentações -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    Histórico de Movimentações
+                    {% if data_inicio or data_fim %}
+                        - Período: 
+                        {{ data_inicio.strftime('%d/%m/%Y') if data_inicio else 'Início' }} até 
+                        {{ data_fim.strftime('%d/%m/%Y') if data_fim else 'Fim' }}
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if movimentacoes %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Produto</th>
+                                    <th>Código</th>
+                                    <th>Quantidade</th>
+                                    <th>Funcionário</th>
+                                    <th>Ambiente Origem</th>
+                                    <th>Ambiente Destino</th>
+                                    <th>Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movimentacao in movimentacoes %}
+                                <tr>
+                                    <td>{{ movimentacao.data_movimentacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if movimentacao.tipo == 'entrada' else 'danger' if movimentacao.tipo == 'saida' else 'info' }}">
+                                            {{ movimentacao.tipo.title() }}
+                                        </span>
+                                    </td>
+                                    <td><strong>{{ movimentacao.produto.nome }}</strong></td>
+                                    <td>{{ movimentacao.produto.cod_prod }}</td>
+                                    <td>{{ movimentacao.quantidade }}</td>
+                                    <td>{{ movimentacao.funcionario.name }}</td>
+                                    <td>
+                                        {% if movimentacao.ambiente_origem %}
+                                            {{ movimentacao.ambiente_origem.nome }}
+                                            <small class="text-muted">({{ movimentacao.ambiente_origem.filial.nome }})</small>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if movimentacao.ambiente_destino %}
+                                            {{ movimentacao.ambiente_destino.nome }}
+                                            <small class="text-muted">({{ movimentacao.ambiente_destino.filial.nome }})</small>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ movimentacao.observacao or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-clock-history display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhuma movimentação encontrada</h4>
+                        <p class="text-muted">
+                            {% if data_inicio or data_fim %}
+                                Não há movimentações no período selecionado.
+                            {% else %}
+                                Nenhuma movimentação foi registrada no sistema.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Análise por Tipo de Movimentação -->
+{% if movimentacoes %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Entradas</h6>
+            </div>
+            <div class="card-body">
+                {% set entradas = movimentacoes | selectattr('tipo', 'equalto', 'entrada') | list %}
+                <p><strong>Total:</strong> {{ entradas | length }} movimentações</p>
+                <p><strong>Quantidade:</strong> {{ entradas | sum(attribute='quantidade') }} itens</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Saídas</h6>
+            </div>
+            <div class="card-body">
+                {% set saidas = movimentacoes | selectattr('tipo', 'equalto', 'saida') | list %}
+                <p><strong>Total:</strong> {{ saidas | length }} movimentações</p>
+                <p><strong>Quantidade:</strong> {{ saidas | sum(attribute='quantidade') }} itens</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="bi bi-arrow-left-right"></i> Transferências</h6>
+            </div>
+            <div class="card-body">
+                {% set transferencias = movimentacoes | selectattr('tipo', 'equalto', 'transferencia') | list %}
+                <p><strong>Total:</strong> {{ transferencias | length }} movimentações</p>
+                <p><strong>Quantidade:</strong> {{ transferencias | sum(attribute='quantidade') }} itens</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Rodapé do Relatório -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="text-center text-muted">
+            <hr>
+            <p>Relatório gerado em {{ moment().format('DD/MM/YYYY HH:mm') if moment else '' }} | Sistema de Rastreabilidade de Patrimônio</p>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .card-header { print-color-adjust: exact; }
+    .no-print { display: none !important; }
+}
+</style>
+{% endblock %}

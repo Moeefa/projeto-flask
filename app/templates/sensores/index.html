@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Sensores - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-cpu"></i> Sensores</h1>
+            <a href="{{ url_for('sensores_create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Novo Sensor
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if sensores %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Funcionário</th>
+                                    <th>Produto</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sensor in sensores %}
+                                <tr>
+                                    <td><span class="badge bg-dark">{{ sensor.cod_sensor }}</span></td>
+                                    <td>{{ sensor.tipo.upper() }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if sensor.status == 'ativo' else 'warning' if sensor.status == 'manutencao' else 'danger' }}">
+                                            {{ sensor.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ sensor.funcionario.name }}</td>
+                                    <td>{{ sensor.produto.nome }}</td>
+                                    <td>{{ sensor.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('sensores_update', id=sensor.id) }}" 
+                                               class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{{ url_for('sensores_delete', id=sensor.id) }}" 
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Tem certeza que deseja remover este sensor?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-cpu display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhum sensor cadastrado</h4>
+                        <p class="text-muted">Clique no botão acima para cadastrar o primeiro sensor.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas dos Sensores -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">Ativos</h5>
+                <h2 class="text-success">
+                    {{ sensores | selectattr('status', 'equalto', 'ativo') | list | length }}
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h5 class="card-title text-warning">Manutenção</h5>
+                <h2 class="text-warning">
+                    {{ sensores | selectattr('status', 'equalto', 'manutencao') | list | length }}
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Inativos</h5>
+                <h2 class="text-danger">
+                    {{ sensores | selectattr('status', 'equalto', 'inativo') | list | length }}
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h5 class="card-title text-info">Total</h5>
+                <h2 class="text-info">{{ sensores | length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

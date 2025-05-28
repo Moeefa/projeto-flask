@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurar Estoque - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-gear"></i> Configurar Estoque</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Informações do Estoque</h5>
+                    <p><strong>Produto:</strong> {{ estoque.produto.nome }}</p>
+                    <p><strong>Ambiente:</strong> {{ estoque.ambiente.nome }}</p>
+                    <p><strong>Filial:</strong> {{ estoque.ambiente.filial.nome }}</p>
+                    <p><strong>Quantidade Atual:</strong> 
+                        <span class="badge bg-{{ 'danger' if estoque.quantidade_atual <= estoque.quantidade_minima else 'success' }}">
+                            {{ estoque.quantidade_atual }}
+                        </span>
+                    </p>
+                </div>
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="quantidade_minima" class="form-label">Quantidade Mínima *</label>
+                        <input type="number" class="form-control" id="quantidade_minima" name="quantidade_minima" 
+                               value="{{ estoque.quantidade_minima }}" min="0" required>
+                        <small class="form-text text-muted">
+                            Quando o estoque atingir este valor, será exibido um alerta de estoque baixo.
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="quantidade_maxima" class="form-label">Quantidade Máxima</label>
+                        <input type="number" class="form-control" id="quantidade_maxima" name="quantidade_maxima" 
+                               value="{{ estoque.quantidade_maxima or '' }}" min="1">
+                        <small class="form-text text-muted">
+                            Capacidade máxima recomendada para este ambiente (opcional).
+                        </small>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Nota:</strong> A quantidade atual não pode ser alterada aqui. 
+                        Use as movimentações para ajustar o estoque.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('estoque_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Salvar Configuração
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

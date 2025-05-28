@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Sensor - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-pencil"></i> Editar Sensor</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cod_sensor" class="form-label">Código do Sensor</label>
+                                <input type="number" class="form-control" id="cod_sensor" name="cod_sensor" 
+                                       value="{{ sensor.cod_sensor }}" disabled>
+                                <small class="text-muted">O código não pode ser alterado</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipo" class="form-label">Tipo de Sensor *</label>
+                                <select class="form-control" id="tipo" name="tipo" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="rfid" {{ 'selected' if sensor.tipo == 'rfid' else '' }}>RFID</option>
+                                    <option value="barcode" {{ 'selected' if sensor.tipo == 'barcode' else '' }}>Código de Barras</option>
+                                    <option value="qrcode" {{ 'selected' if sensor.tipo == 'qrcode' else '' }}>QR Code</option>
+                                    <option value="nfc" {{ 'selected' if sensor.tipo == 'nfc' else '' }}>NFC</option>
+                                    <option value="bluetooth" {{ 'selected' if sensor.tipo == 'bluetooth' else '' }}>Bluetooth</option>
+                                    <option value="gps" {{ 'selected' if sensor.tipo == 'gps' else '' }}>GPS</option>
+                                    <option value="outros" {{ 'selected' if sensor.tipo == 'outros' else '' }}>Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status *</label>
+                                <select class="form-control" id="status" name="status" required>
+                                    <option value="ativo" {{ 'selected' if sensor.status == 'ativo' else '' }}>Ativo</option>
+                                    <option value="inativo" {{ 'selected' if sensor.status == 'inativo' else '' }}>Inativo</option>
+                                    <option value="manutencao" {{ 'selected' if sensor.status == 'manutencao' else '' }}>Manutenção</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="id_func" class="form-label">Funcionário Responsável *</label>
+                                <select class="form-control" id="id_func" name="id_func" required>
+                                    <option value="">Selecione um funcionário</option>
+                                    {% for funcionario in funcionarios %}
+                                        <option value="{{ funcionario.id }}" {{ 'selected' if sensor.id_func == funcionario.id else '' }}>
+                                            {{ funcionario.name }} ({{ funcionario.cod_func }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="id_prod" class="form-label">Produto Associado *</label>
+                                <select class="form-control" id="id_prod" name="id_prod" required>
+                                    <option value="">Selecione um produto</option>
+                                    {% for produto in produtos %}
+                                        <option value="{{ produto.id }}" {{ 'selected' if sensor.id_prod == produto.id else '' }}>
+                                            {{ produto.nome }} ({{ produto.cod_prod }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Atenção:</strong> Alterar o status para "inativo" pode afetar o rastreamento 
+                        dos produtos associados a este sensor.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('sensores_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Atualizar Sensor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

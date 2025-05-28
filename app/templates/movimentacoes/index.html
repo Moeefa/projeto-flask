@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Movimentações - Sistema de Patrimônio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-arrow-repeat"></i> Movimentações</h1>
+            <a href="{{ url_for('movimentacoes_create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nova Movimentação
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if movimentacoes %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Funcionário</th>
+                                    <th>Origem</th>
+                                    <th>Destino</th>
+                                    <th>Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movimentacao in movimentacoes %}
+                                <tr>
+                                    <td>{{ movimentacao.data_movimentacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if movimentacao.tipo == 'entrada' else 'danger' if movimentacao.tipo == 'saida' else 'info' }}">
+                                            {{ movimentacao.tipo.title() }}
+                                        </span>
+                                    </td>
+                                    <td><strong>{{ movimentacao.produto.nome }}</strong></td>
+                                    <td>{{ movimentacao.quantidade }}</td>
+                                    <td>{{ movimentacao.funcionario.name }}</td>
+                                    <td>
+                                        {% if movimentacao.ambiente_origem %}
+                                            {{ movimentacao.ambiente_origem.nome }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if movimentacao.ambiente_destino %}
+                                            {{ movimentacao.ambiente_destino.nome }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ movimentacao.observacao[:30] + '...' if movimentacao.observacao and movimentacao.observacao|length > 30 else movimentacao.observacao or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-arrow-repeat display-1 text-muted"></i>
+                        <h4 class="text-muted mt-3">Nenhuma movimentação registrada</h4>
+                        <p class="text-muted">Clique no botão acima para registrar a primeira movimentação.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
