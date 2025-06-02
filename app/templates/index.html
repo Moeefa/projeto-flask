@@ -1,27 +1,61 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Items</h1>
-<a href="{{ url_for('create') }}" class="btn btn-primary">Create New Item</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.description }}</td>
-            <td>
-                <a href="{{ url_for('update', id=item.id) }}" class="btn btn-warning">Edit</a>
-                <a href="{{ url_for('delete', id=item.id) }}" class="btn btn-danger">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><span class="icon">📋</span> Items</h1>
+            <a href="{{ url_for('create') }}" class="btn btn-primary">
+                <span class="icon">➕</span> Create New Item
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if items %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td><strong>{{ item.name }}</strong></td>
+                                    <td>{{ item.description or '-' }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('update', id=item.id) }}" class="btn btn-sm btn-warning">
+                                                <span class="icon">✏️</span>
+                                            </a>
+                                            <a href="{{ url_for('delete', id=item.id) }}" class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Are you sure you want to delete this item?')">
+                                                <span class="icon">🗑️</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <span class="icon">📋</span>
+                        <h4 class="text-muted mt-3">No items found</h4>
+                        <p class="text-muted">Click the button above to create the first item.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
