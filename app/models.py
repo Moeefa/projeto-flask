@@ -2,7 +2,7 @@ from app import db
 from datetime import datetime
 
 
-class Funcionarios(db.Model):
+class Funcionarios(db.Model):           #tabela de funcionarios
     __tablename__ = 'funcionarios'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -22,7 +22,7 @@ class Funcionarios(db.Model):
         return f'<Funcionario {self.name}>'
 
 
-class Produtos(db.Model):
+class Produtos(db.Model):           #tabela de produtos
     __tablename__ = 'produtos'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -42,7 +42,7 @@ class Produtos(db.Model):
         return f'<Produto {self.nome}>'
 
 
-class Filial(db.Model):
+class Filial(db.Model):             #tabela das filiais
     __tablename__ = 'filial'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -61,7 +61,7 @@ class Filial(db.Model):
         return f'<Filial {self.nome}>'
 
 
-class Sensores(db.Model):
+class Sensores(db.Model):               #tabela dos sensores
     __tablename__ = 'sensores'
     id = db.Column(db.Integer, primary_key=True)
     cod_sensor = db.Column(db.Integer, nullable=False, unique=True)
@@ -82,7 +82,7 @@ class Sensores(db.Model):
         return f'<Sensor {self.cod_sensor}>'
 
 
-class Ambiente(db.Model):
+class Ambiente(db.Model):               #tabela dos ambientes\lugares
     __tablename__ = 'ambiente'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -114,7 +114,7 @@ class Ambiente(db.Model):
         return f'<Ambiente {self.nome}>'
 
 
-class Movimentacao(db.Model):
+class Movimentacao(db.Model):               #tabela da movimentaçaõ dos produtos
     __tablename__ = 'movimentacao'
     id = db.Column(db.Integer, primary_key=True)
     # entrada, saida, transferencia
@@ -145,7 +145,7 @@ class Movimentacao(db.Model):
         return f'<Movimentacao {self.tipo} - {self.data_movimentacao}>'
 
 
-class Estoque(db.Model):
+class Estoque(db.Model):                #tabela para controle de estoque
     __tablename__ = 'estoque'
     id = db.Column(db.Integer, primary_key=True)
     quantidade_atual = db.Column(db.Integer, nullable=False, default=0)
