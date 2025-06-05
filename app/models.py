@@ -114,7 +114,7 @@ class Ambiente(db.Model):               #tabela dos ambientes\lugares
         return f'<Ambiente {self.nome}>'
 
 
-class Movimentacao(db.Model):               #tabela da movimentaçaõ dos produtos
+class Movimentacao(db.Model):               #tabela da movimentaçaõ dos produtos (joao marcelo esteve aqui)
     __tablename__ = 'movimentacao'
     id = db.Column(db.Integer, primary_key=True)
     # entrada, saida, transferencia
